@@ -1,0 +1,10 @@
+{
+  "name": "texture-checker",
+  "version": "0.1.0",
+  "dependencies": [
+    "argparse",
+    "catch2",
+    "fmt",
+    "spdlog"
+  ]
+}
