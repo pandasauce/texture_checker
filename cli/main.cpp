@@ -20,9 +20,9 @@
 namespace {
 
 struct Selection {
-    bool format = true;
+    bool format = false;
     bool channels = false;
-    bool compression = false;
+    bool compression = true;
     bool resolution = false;
     bool mips = false;
     bool size = false;
@@ -50,11 +50,11 @@ void route_diagnostics_to_stderr() {
 
 void configure_parser(argparse::ArgumentParser& program) {
     program.add_description("Report format, channel, compression, resolution, mip and size datasets for textures. "
-                            "The format is shown unless switched off; the rest are opt-in.");
+                            "The compression is shown unless switched off; the rest are opt-in.");
     program.add_argument("files").remaining().help("texture files or glob patterns");
-    program.add_argument("--no-format").flag().help("omit the container format, which is otherwise always shown");
+    program.add_argument("--no-compression").flag().help("omit the compression, which is otherwise always shown");
+    program.add_argument("--format").flag().help("add the container format dataset");
     program.add_argument("--channels").flag().help("add the channel layout dataset");
-    program.add_argument("--compression").flag().help("add the compression dataset");
     program.add_argument("--resolution").flag().help("add the pixel resolution dataset");
     program.add_argument("--mips").flag().help("add the mip level count dataset");
     program.add_argument("--size").flag().help("add the file size dataset");
@@ -63,9 +63,9 @@ void configure_parser(argparse::ArgumentParser& program) {
 
 Selection read_selection(const argparse::ArgumentParser& program) {
     Selection selection;
-    selection.format = !program.get<bool>("--no-format");
+    selection.format = program.get<bool>("--format");
     selection.channels = program.get<bool>("--channels");
-    selection.compression = program.get<bool>("--compression");
+    selection.compression = !program.get<bool>("--no-compression");
     selection.resolution = program.get<bool>("--resolution");
     selection.mips = program.get<bool>("--mips");
     selection.size = program.get<bool>("--size");
@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
 
     const Selection selection = read_selection(program);
     if (!any_dataset_selected(selection)) {
-        spdlog::error("--no-format left no datasets to report");
+        spdlog::error("--no-compression left no datasets to report");
         fmt::print(stderr, "{}", program.help().str());
         return 2;
     }
