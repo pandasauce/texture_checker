@@ -1,9 +1,9 @@
 ```
-$ ./texcheck.exe -h
-Usage: texcheck [--help] [--version] [--no-channels] [--format] [--compression]
+$ texcheck -h
+Usage: texcheck [--help] [--version] [--no-format] [--channels] [--compression]
 [--resolution] [--mips] [--size] [--bytes] [files]...
 
-Report channel, compression, format, resolution, mip and size datasets for textures. Channels are shown unless switched off; the rest are opt-in.
+Report format, channel, compression, resolution, mip and size datasets for textures. The format is shown unless switched off; the rest are opt-in.
 
 Positional arguments:
   files          texture files or glob patterns [nargs: 0 or more]
@@ -11,8 +11,8 @@ Positional arguments:
 Optional arguments:
   -h, --help     shows help message and exits
   -v, --version  prints version information and exits
-  --no-channels  omit the channel layout, which is otherwise always shown
-  --format       add the container format dataset
+  --no-format    omit the container format, which is otherwise always shown
+  --channels     add the channel layout dataset
   --compression  add the compression dataset
   --resolution   add the pixel resolution dataset
   --mips         add the mip level count dataset

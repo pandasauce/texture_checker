@@ -20,8 +20,8 @@
 namespace {
 
 struct Selection {
-    bool format = false;
-    bool channels = true;
+    bool format = true;
+    bool channels = false;
     bool compression = false;
     bool resolution = false;
     bool mips = false;
@@ -49,11 +49,11 @@ void route_diagnostics_to_stderr() {
 }
 
 void configure_parser(argparse::ArgumentParser& program) {
-    program.add_description("Report channel, compression, format, resolution, mip and size datasets for textures. "
-                            "Channels are shown unless switched off; the rest are opt-in.");
+    program.add_description("Report format, channel, compression, resolution, mip and size datasets for textures. "
+                            "The format is shown unless switched off; the rest are opt-in.");
     program.add_argument("files").remaining().help("texture files or glob patterns");
-    program.add_argument("--no-channels").flag().help("omit the channel layout, which is otherwise always shown");
-    program.add_argument("--format").flag().help("add the container format dataset");
+    program.add_argument("--no-format").flag().help("omit the container format, which is otherwise always shown");
+    program.add_argument("--channels").flag().help("add the channel layout dataset");
     program.add_argument("--compression").flag().help("add the compression dataset");
     program.add_argument("--resolution").flag().help("add the pixel resolution dataset");
     program.add_argument("--mips").flag().help("add the mip level count dataset");
@@ -63,8 +63,8 @@ void configure_parser(argparse::ArgumentParser& program) {
 
 Selection read_selection(const argparse::ArgumentParser& program) {
     Selection selection;
-    selection.format = program.get<bool>("--format");
-    selection.channels = !program.get<bool>("--no-channels");
+    selection.format = !program.get<bool>("--no-format");
+    selection.channels = program.get<bool>("--channels");
     selection.compression = program.get<bool>("--compression");
     selection.resolution = program.get<bool>("--resolution");
     selection.mips = program.get<bool>("--mips");
@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
 
     const Selection selection = read_selection(program);
     if (!any_dataset_selected(selection)) {
-        spdlog::error("--no-channels left no datasets to report");
+        spdlog::error("--no-format left no datasets to report");
         fmt::print(stderr, "{}", program.help().str());
         return 2;
     }
